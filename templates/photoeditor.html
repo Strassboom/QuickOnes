@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+      .income {
+        position: static;
+        left:0%;
+        bottom:60%;
+        display: block;
+        background-color: #AD5472;
+        overflow: visible;
+    }
+    
+    .outcome {
+      width: 200;
+      height: 200;
+      background-color: #AD5472;
+      padding: 14px;
+    }
+    
+    input {
+      background-color: #4CAF50;
+      /* Green */
+      border: none;
+      color: white;
+      font-size: 16px;
+      display: flex;
+      text-align: center;
+    }
+    
+    .choosefile {
+      position: absolute;
+      display: block;
+      width: 15%;
+      height: 8%;
+      left: 0%;
+      bottom: 22%;
+      border: none;
+      background-color: #EBA6A9;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+    }
+    
+    .rock {
+      position: absolute;
+      display: block;
+      width: 40%;
+      height: 8%;
+      left: 30%;
+      bottom: 22%;
+      border: none;
+      background-color: #480219;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+    }
+    
+    .inputfile {
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      z-index: -1;
+    }
+    
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .imgcontainer {
+      display: block;
+      width: 50%;
+      height: 50%;
+    }
+
+    .buttonHolder {
+      text-align: center;
+    }
+    
+    body {
+      background-color: #8E3150;
+    }
+
+    .divider{
+        width:5px;
+        height:auto;
+        display:inline-block;
+    
+    }
+
+
+  /* Dropup Button */
+  .dropbtn {
+    background-color: #3498DB;
+    color: white;
+    font-size: 16px;
+    border: none;
+    width: 100%;
+    height:100%;
+  }
+
+  /* The container <div> - needed to position the dropup content */
+  .dropup {
+    position: absolute;
+    width: 15%;
+    height:8%;
+    bottom: 22%;
+    left:15%;
+    display: block;
+  }
+
+  /* Dropup content (Hidden by Default) */
+  .dropup-content {
+    display: none;
+    position: absolute;
+    bottom: -100px;
+    background-color: #f1f1f1;
+    min-width: 100%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+
+  /* Links inside the dropup */
+  .dropup-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+
+  /* Change color of dropup links on hover */
+  .dropup-content a:hover {background-color: #ddd}
+
+  /* Show the dropup menu on hover */
+  .dropup:hover .dropup-content {
+    display: block;
+  }
+
+  /* Change the background color of the dropup button when the dropup content is shown */
+  .dropup:hover .dropbtn {
+    background-color: #2980B9;
+  }
+</style>
+</head>
+
+<body>
+    <div class="imgcontainer">
+        <canvas id="myCanvas" class="income" width="449" height="449"></canvas>
+    </div>
+    <div class="container">
+        <div class="dropup">
+            <button id="check" class="dropbtn">MODE</button>
+            <div class="dropup-content">
+                <a href="#">Link 1</a>
+                <a href="#">Link 2</a>
+                <a href="#">Link 3</a>
+            </div>
+        </div>
+    </div>
+    <form method="post">
+        <input type="file" id="file" name="file" class="inputfile" accept="image/*" onclick>
+        <label for="file" class="choosefile" id="fileLabel">FILE</label>
+        <input type="submit" class="rock" name="confirm">
+    </form>
+  <script>
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "red";
+    var fileinput = document.getElementById('file');
+    var fileLabel = document.getElementById('fileLabel');
+    var oops = document.getElementById('check');
+
+    var checkup = [];
+    var img;
+    var leftest;
+    var rightest;
+    var bottommost;
+    var topmost;
+    var oof;
+
+    function scaleToFill(img){
+      // get the scale
+      var scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+      // get the top left position of the image
+      var x = (canvas.width / 2) - (img.width / 2) * scale;
+      var y = (canvas.height / 2) - (img.height / 2) * scale;
+      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+    }
+
+    function readImage() {
+      if(this.files && this.files[0]) {
+        // Read in the image file as a data URL.
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.strokeStyle = "red";
+        checkup = [];
+        var FR = new FileReader();
+        FR.onload = function(e){
+          img = new Image();
+          img.onload = function(){
+            canvas.width = this.width;
+            canvas.height = this.height;
+            scaleToFill(this);
+          }
+          img.src = e.target.result;
+        };
+        FR.readAsDataURL(this.files[0]);    
+      }
+    }
+    
+    document.getElementById("file").addEventListener("change",readImage,false);
+
+    // StackOverflow function:
+    // https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
+    // Mirogord, vsync
+    // Francisc, jonschlinkert
+    function randomIntFromInterval(min, max) { // min and max included 
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function randomizer(minX,minY,maxX,maxY,box){
+      var okayX = randomIntFromInterval(minX,maxX);
+      var okayY = randomIntFromInterval(minY,maxY);
+      while (box[0] <= okayX <= box[2] && box[1] <= okayY <= box[3]){
+        okayX = randomIntFromInterval(minX,maxX);
+        okayY = randomIntFromInterval(minY,maxY);
+      }
+      return (okayX,okayY)
+    }
+
+    function emojiPaster(){
+
+      emojiImg = new Image();
+      emojiImg.src = "sparklingheart.png";
+
+      // oof.forEach(function(item,index){
+
+      fminx = 0;
+      fminy = 0;
+
+
+      //okayPosition = randomizer(0,0,canvas.width/2.0,canvas.height/2.0,[oof[0][0],oof[0][1],(oof[1][0]-oof[0][0])/2.0,(oof[2][1]-oof[0][1])/2.0]);
+      // });
+      //oops.innerHTML = [okayPosition[0],okayPosition[1]];
+
+      //ctx.drawImage(emojiImg,okayPosition[0],okayPosition[1],50,50);
+    }
+
+    function straightener(){
+      left = checkup;
+      leftest = left.sort(function(a,b){return a[0]-b[0];})[0];
+      rightest = left.sort(function(a,b){return a[0]-b[0];}).reverse()[0];
+      bottommost = left.sort(function(a,b){return a[1]-b[1];})[0];
+      topmost = left.sort(function(a,b){return a[1]-b[1];}).reverse()[0];
+      oof = [];
+      oof.push([leftest[0],topmost[1]]);
+      oof.push([rightest[0],topmost[1]]);
+      oof.push([rightest[0],bottommost[1]]);
+      oof.push([leftest[0],bottommost[1]]);
+      
+      ctx.clearRect(0,0,canvas.width,canvas.height)
+      scaleToFill(img);
+      ctx.beginPath();
+      ctx.strokeStyle = "red";
+      oof.forEach(function (item, index) {
+        if (index < 4){
+          if (index > 0){
+            ctx.lineTo(item[0],item[1]);
+            ctx.stroke();
+          }
+          ctx.moveTo(oof[index][0],oof[index][1]);
+        }
+      });
+      ctx.lineTo(oof[0][0],oof[0][1]);
+      ctx.stroke();
+
+      //scaleToFill(img);
+
+      emojiPaster();
+    }
+
+    function rectangleMaker(event){
+      if (checkup.length == 4){
+        checkup = [];
+      }
+      if (checkup.length < 4){
+        if (checkup.length == 0){
+          ctx.beginPath();           
+        }
+        if (checkup.length > 0){
+          ctx.fillStyle = "red";
+          ctx.lineTo(event.pageX - canvas.offsetLeft,event.pageY - canvas.offsetTop)
+          ctx.stroke();
+        }
+        ctx.moveTo(event.pageX - canvas.offsetLeft,event.pageY - canvas.offsetTop);
+        checkup.push([event.pageX - canvas.offsetLeft,event.pageY - canvas.offsetTop]);
+        if (checkup.length == 4){
+            ctx.lineTo(checkup[0][0],checkup[0][1]);
+            ctx.closePath();
+            ctx.stroke();
+            straightener();
+        }
+      }
+    }
+    canvas.addEventListener("mousedown",rectangleMaker,false);
+  </script>
+</body>
+
+</html>
