@@ -234,25 +234,29 @@
         okayX = randomIntFromInterval(minX,maxX);
         okayY = randomIntFromInterval(minY,maxY);
       }
-      return (okayX,okayY)
+      return [okayX,okayY]
     }
 
     function emojiPaster(){
 
       emojiImg = new Image();
       emojiImg.src = "sparklingheart.png";
+      emojiImg.onload = function(){
+        // oof.forEach(function(item,index){
 
-      // oof.forEach(function(item,index){
+        fminx = 0;
+        fminy = 0;
 
-      fminx = 0;
-      fminy = 0;
+        // for (var count = 0;count < fgTotal;count++){
 
-
-      //okayPosition = randomizer(0,0,canvas.width/2.0,canvas.height/2.0,[oof[0][0],oof[0][1],(oof[1][0]-oof[0][0])/2.0,(oof[2][1]-oof[0][1])/2.0]);
-      // });
-      //oops.innerHTML = [okayPosition[0],okayPosition[1]];
-
-      //ctx.drawImage(emojiImg,okayPosition[0],okayPosition[1],50,50);
+        // }
+        okayPosition = randomizer(0,0,canvas.width/2.0,canvas.height/2.0,[oof[0][0],oof[0][1],(oof[1][0]-oof[0][0])/2.0,(oof[2][1]-oof[0][1])/2.0]);
+        // });
+        //oops.innerHTML = [okayPosition[0],okayPosition[1]];
+        
+        ctx.drawImage(emojiImg,okayPosition[0],okayPosition[1],10,10);
+        oops.innerHTML = okayPosition
+      };
     }
 
     function straightener(){
