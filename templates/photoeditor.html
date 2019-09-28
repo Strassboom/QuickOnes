@@ -167,12 +167,14 @@
             </div>
         </div>
     </div>
-    <form method="post">
+    <form action="upload.php" method="post" enctype="multipart/form-data">
         <input type="file" id="file" name="file" class="inputfile" accept="image/*" onclick>
         <label for="file" class="choosefile" id="fileLabel">FILE</label>
         <input type="submit" class="rock" name="confirm">
     </form>
+    <img src="" id="imagesage" crossorigin="anonymous">
     <p id="demo"></p>
+    <button id="pinkie" class="rock">DEAL</button>
 
   <script>
     var canvas = document.getElementById('myCanvas');
@@ -199,7 +201,12 @@
     }
 
     function readImage() {
+      
       if(this.files && this.files[0]) {
+        let photo = this.files[0];
+        let formData = new FormData();
+        formData.append("photo", photo);
+        fetch('/upload/image', {method: "POST", body: formData});
         // Read in the image file as a data URL.
         ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.strokeStyle = "red";
@@ -218,6 +225,9 @@
       }
     }
     
+    
+
+
     document.getElementById("file").addEventListener("change",readImage,false);
 
     // StackOverflow function:
@@ -338,7 +348,9 @@
             //image_copy.paste(fgImage,position,fgImage)
             ctx.drawImage(fgImage,position[0],position[1],fgSize,fgSize);
         }
+        
       };
+
     }
     function straightener(){
       left = checkup;
@@ -396,6 +408,7 @@
         }
       }
     }
+    
     canvas.addEventListener("mousedown",rectangleMaker,false);
   </script>
 </body>
