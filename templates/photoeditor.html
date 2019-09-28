@@ -172,6 +172,8 @@
         <label for="file" class="choosefile" id="fileLabel">FILE</label>
         <input type="submit" class="rock" name="confirm">
     </form>
+    <p id="demo"></p>
+
   <script>
     var canvas = document.getElementById('myCanvas');
     var ctx = canvas.getContext("2d");
@@ -179,7 +181,6 @@
     var fileinput = document.getElementById('file');
     var fileLabel = document.getElementById('fileLabel');
     var oops = document.getElementById('check');
-
     var checkup = [];
     var img;
     var leftest;
@@ -227,14 +228,48 @@
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    function randomizer(minX,minY,maxX,maxY,box){
-      var okayX = randomIntFromInterval(minX,maxX);
-      var okayY = randomIntFromInterval(minY,maxY);
-      while (box[0] <= okayX <= box[2] && box[1] <= okayY <= box[3]){
-        okayX = randomIntFromInterval(minX,maxX);
-        okayY = randomIntFromInterval(minY,maxY);
+    function randomPasterTL(minX,minY,midX,midY,maxX,maxY,emojiSize){
+      var okayX = randomIntFromInterval(midX,maxX) - emojiSize;
+      var okayY = randomIntFromInterval(minY,maxY) - emojiSize;
+      var XYorBoth  = randomIntFromInterval(0,7);
+      if (XYorBoth == 0 || XYorBoth == 1 || XYorBoth == 2 || XYorBoth == 3 || XYorBoth == 4 || XYorBoth == 5){ 
+        var okayX = okayX - randomIntFromInterval(okayX-midX,maxX) - emojiSize;
       }
+      if (XYorBoth == 3 || XYorBoth == 4 || XYorBoth == 5 || XYorBoth == 6 || XYorBoth == 7){
+        var okayY = okayY - randomIntFromInterval(minY+(okayY-midY),maxY) - emojiSize;
+      }
+      oops.innerHTML = [midX-(okayX-midX)];
       return [okayX,okayY]
+    }
+
+    function randomPasterBL(minX,minY,midX,midY,maxX,maxY,emojiSize){
+      var okayX = randomIntFromInterval(midX,maxX) - emojiSize;
+      var okayY = randomIntFromInterval(midY,maxY) - emojiSize;
+      var XYorBoth  = randomIntFromInterval(0,7);
+      if (XYorBoth == 0 || XYorBoth == 1 || XYorBoth == 2 || XYorBoth == 3 || XYorBoth == 4 || XYorBoth == 5){ 
+        var okayX = okayX - randomIntFromInterval(okayX-midX,maxX) - emojiSize;
+      }
+      if (XYorBoth == 3 || XYorBoth == 4 || XYorBoth == 5 || XYorBoth == 6 || XYorBoth == 7){
+        var okayY = okayY + randomIntFromInterval(midY,okayY) + emojiSize;
+      }
+      oops.innerHTML = [midX-(okayX-midX)];
+      return [okayX,okayY]
+    }
+
+    function randomizer(minx,maxx,miny,maxy,box){
+      newminx = parseInt(minx);
+      newmaxx = parseInt(maxx);
+      newminy = parseInt(miny);
+      newmaxy = parseInt(maxy);
+      okayx = randomIntFromInterval(newminx,newmaxx);
+      okayy = randomIntFromInterval(newminy,newmaxy);
+      oops.innerHTML = oof;
+      while (box[0] <= okayx && okayx <= box[2] && box[1] <= okayy &&  okayy <= box[3]){
+        okayx = randomIntFromInterval(newminx,newmaxx);
+        okayy = randomIntFromInterval(newminy,newmaxy);
+        oops.innerHTML = okayx;
+      }
+      return [okayx,okayy];
     }
 
     function emojiPaster(){
@@ -244,21 +279,67 @@
       emojiImg.onload = function(){
         // oof.forEach(function(item,index){
 
-        fminx = 0;
-        fminy = 0;
-
+        var fgTotal = 50;
+        var emojiSize = randomIntFromInterval(5,10);
+        // var bottomLeft = [0,oof[3][1] + ((oof[0][1] - oof[3][1])/2.0),oof[3][0],oof[3][1],oof[3][0] + ((oof[1][0] - oof[3][0])/2.0),canvas.height];
+        // var topLeft = [0,0,oof[3][0],oof[3][1],oof[3][0] + (oof[2][0] - oof[3][0])/2.0,oof[3][1] + (oof[0][1] - oof[3][1])/2.0];
         // for (var count = 0;count < fgTotal;count++){
-
+        //   okayPosition = randomPasterTL(topLeft[0],topLeft[1],topLeft[2],topLeft[3],topLeft[4],topLeft[5],emojiSize);
+        //   ctx.drawImage(emojiImg,okayPosition[0],okayPosition[1],emojiSize,emojiSize);
+        //   okayPosition = randomPasterBL(bottomLeft[0],bottomLeft[1],bottomLeft[2],bottomLeft[3],bottomLeft[4],bottomLeft[5],emojiSize);
+        //   ctx.drawImage(emojiImg,okayPosition[0],okayPosition[1],emojiSize,emojiSize);
+        //   emojiSize = randomIntFromInterval(5,15);
         // }
-        okayPosition = randomizer(0,0,canvas.width/2.0,canvas.height/2.0,[oof[0][0],oof[0][1],(oof[1][0]-oof[0][0])/2.0,(oof[2][1]-oof[0][1])/2.0]);
-        // });
-        //oops.innerHTML = [okayPosition[0],okayPosition[1]];
+        var fgImage = emojiImg;
         
-        ctx.drawImage(emojiImg,okayPosition[0],okayPosition[1],10,10);
-        oops.innerHTML = okayPosition
+        var foreground = oof;
+        for (var item = 0; item< fgTotal; item++){
+            //fgImage = Image.open(fgImages[random.randint(0,len(fgImages)-1)])
+            //resize emojiImage to fit inside bgImage
+            //if randomSize:
+            fgSize = randomIntFromInterval(10,15);
+            fgSize = canvas.width/fgSize;	
+            
+            fminx = 0;
+            
+            fminy = 0;
+            //print(foreground);
+            fx = foreground[3][0];
+            
+            fy = foreground[3][1];
+            
+            fwid = (foreground[1][0]-foreground[3][0]);
+            
+            fhei = (foreground[1][1]-foreground[3][1]);
+            
+            fmidx = fx + (fwid/2);
+            
+            fmaxx = canvas.width;
+            
+            fmidy = fy + (fhei/2);
+            
+            fmaxy = canvas.height;
+            
+            
+            position = randomizer(fminx,fmidx,fminy,fmidy,
+            [fx,fy,fmidx,fmidy]);
+            //image_copy.paste(fgImage, position,fgImage)
+            ctx.drawImage(fgImage,position[0],position[1],fgSize,fgSize);
+            
+            position = randomizer(fminx,fmidx,fmidy,fmaxy,[fx,fmidy,fmidx,fmidy+fhei/2]);
+            //image_copy.paste(fgImage,position,fgImage)
+            ctx.drawImage(fgImage,position[0],position[1],fgSize,fgSize);
+            
+            position = randomizer(fmidx,fmaxx,fmidy,fmaxy,[fmidx,fmidy,fmidx+fwid/2,fmidy+fhei/2]);
+            //image_copy.paste(fgImage,position,fgImage)
+            ctx.drawImage(fgImage,position[0],position[1],fgSize,fgSize);
+            
+            position = randomizer(fmidx,fmaxx,fminy,fmidy,[fmidx,fy,fmidx+fwid/2,fmidy]);
+            //image_copy.paste(fgImage,position,fgImage)
+            ctx.drawImage(fgImage,position[0],position[1],fgSize,fgSize);
+        }
       };
     }
-
     function straightener(){
       left = checkup;
       leftest = left.sort(function(a,b){return a[0]-b[0];})[0];
