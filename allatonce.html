@@ -375,7 +375,9 @@
         //document.body.style.background = "url(" + canvas.toDataURL() + ")";
         var el = document.createElement("a");
         var image = canvas.toDataURL("image/jpg");
-        lastPic = document.createElement("img");
+        var lastPic = document.createElement("img");
+        lastPic.src = image;
+        document.body.appendChild(lastPic);
         el.download = "makeLove.jpg";
         el.href = image;
         document.body.appendChild(el);
