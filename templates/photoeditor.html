@@ -36,27 +36,14 @@
     .choosefile {
       position: absolute;
       display: block;
-      width: 15%;
-      height: 8%;
+      width: 100%;
+      height: 20%;
       left: 0%;
-      bottom: 22%;
+      top: 81%;
+      bottom: 0%;
       border: none;
-      background-color: #EBA6A9;
+      background-color: rgba(255, 138, 144, 0.781);
       color: white;
-      font-size: 16px;
-      cursor: pointer;
-      text-align: center;
-    }
-    
-    .rock {
-      position: absolute;
-      display: block;
-      width: 40%;
-      height: 8%;
-      left: 30%;
-      bottom: 22%;
-      border: none;
-      background-color: #480219;
       font-size: 16px;
       cursor: pointer;
       text-align: center;
@@ -64,12 +51,28 @@
     
     .inputfile {
       width: 0.1px;
-      height: 0.1px;
+      height: 20%;
       opacity: 0;
       overflow: hidden;
       position: absolute;
       z-index: -1;
     }
+
+    .rock {
+      position: absolute;
+      display: block;
+      width: 40%;
+      height: 8%;
+      left: 30%;
+      top: 81%;
+      border: none;
+      background-color: #480219;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+    }
+    
+
     
     .container {
       display: flex;
@@ -114,7 +117,7 @@
     position: absolute;
     width: 15%;
     height:8%;
-    bottom: 22%;
+    top: 81%;
     left:15%;
     display: block;
   }
@@ -157,7 +160,7 @@
     <div class="imgcontainer">
         <canvas id="myCanvas" class="income" width="449" height="449"></canvas>
     </div>
-    <div class="container">
+    <!--<div class="container">
         <div class="dropup">
             <button id="check" class="dropbtn">MODE</button>
             <div class="dropup-content">
@@ -166,21 +169,24 @@
                 <a href="#">Link 3</a>
             </div>
         </div>
-    </div>
-    <form method="post">
+    </div>-->
+    <form action="upload.php" method="post" enctype="multipart/form-data">
         <input type="file" id="file" name="file" class="inputfile" accept="image/*" onclick>
         <label for="file" class="choosefile" id="fileLabel">FILE</label>
-        <input type="submit" class="rock" name="confirm">
+        <!--<input type="submit" class="rock" name="confirm">-->
     </form>
+    <img src="" id="imagesage" crossorigin="anonymous">
     <p id="demo"></p>
+    <!--<button id="pinkie" class="rock">DEAL</button>-->
 
   <script>
     var canvas = document.getElementById('myCanvas');
+
     var ctx = canvas.getContext("2d");
     ctx.strokeStyle = "red";
     var fileinput = document.getElementById('file');
     var fileLabel = document.getElementById('fileLabel');
-    var oops = document.getElementById('check');
+    //var oops = document.getElementById('check');
     var checkup = [];
     var img;
     var leftest;
@@ -188,6 +194,13 @@
     var bottommost;
     var topmost;
     var oof;
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight * 4 / 5;
+      //fileinput.style.bottom = window.innerHeight / 5;
+      //fileLabel.style.bottom = window.innerHeight / 5;
+    }
 
     function scaleToFill(img){
       // get the scale
@@ -198,8 +211,24 @@
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     }
 
+    function scaleToFit(img){
+    // get the scale
+    var scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+    // get the top left position of the image
+    var x = (canvas.width / 2) - (img.width / 2) * scale;
+    var y = (canvas.height / 2) - (img.height / 2) * scale;
+    canvas.width = img.width * scale;
+    canvas.height = img.height * scale;
+    ctx.drawImage(img, 0, 0, img.width * scale, img.height * scale);
+    }
+
     function readImage() {
+      
       if(this.files && this.files[0]) {
+        let photo = this.files[0];
+        let formData = new FormData();
+        formData.append("photo", photo);
+        fetch('/upload/image', {method: "POST", body: formData});
         // Read in the image file as a data URL.
         ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.strokeStyle = "red";
@@ -208,9 +237,9 @@
         FR.onload = function(e){
           img = new Image();
           img.onload = function(){
-            canvas.width = this.width;
-            canvas.height = this.height;
-            scaleToFill(this);
+            //canvas.width = this.width;
+            //canvas.height = this.height;
+            scaleToFit(this);
           }
           img.src = e.target.result;
         };
@@ -218,6 +247,9 @@
       }
     }
     
+    
+
+
     document.getElementById("file").addEventListener("change",readImage,false);
 
     // StackOverflow function:
@@ -238,7 +270,7 @@
       if (XYorBoth == 3 || XYorBoth == 4 || XYorBoth == 5 || XYorBoth == 6 || XYorBoth == 7){
         var okayY = okayY - randomIntFromInterval(minY+(okayY-midY),maxY) - emojiSize;
       }
-      oops.innerHTML = [midX-(okayX-midX)];
+      //oops.innerHTML = [midX-(okayX-midX)];
       return [okayX,okayY]
     }
 
@@ -252,7 +284,7 @@
       if (XYorBoth == 3 || XYorBoth == 4 || XYorBoth == 5 || XYorBoth == 6 || XYorBoth == 7){
         var okayY = okayY + randomIntFromInterval(midY,okayY) + emojiSize;
       }
-      oops.innerHTML = [midX-(okayX-midX)];
+      //oops.innerHTML = [midX-(okayX-midX)];
       return [okayX,okayY]
     }
 
@@ -263,11 +295,11 @@
       newmaxy = parseInt(maxy);
       okayx = randomIntFromInterval(newminx,newmaxx);
       okayy = randomIntFromInterval(newminy,newmaxy);
-      oops.innerHTML = oof;
+      //oops.innerHTML = oof;
       while (box[0] <= okayx && okayx <= box[2] && box[1] <= okayy &&  okayy <= box[3]){
         okayx = randomIntFromInterval(newminx,newmaxx);
         okayy = randomIntFromInterval(newminy,newmaxy);
-        oops.innerHTML = okayx;
+        //oops.innerHTML = okayx;
       }
       return [okayx,okayy];
     }
@@ -338,7 +370,9 @@
             //image_copy.paste(fgImage,position,fgImage)
             ctx.drawImage(fgImage,position[0],position[1],fgSize,fgSize);
         }
+        
       };
+
     }
     function straightener(){
       left = checkup;
@@ -353,7 +387,7 @@
       oof.push([leftest[0],bottommost[1]]);
       
       ctx.clearRect(0,0,canvas.width,canvas.height)
-      scaleToFill(img);
+      scaleToFit(img);
       ctx.beginPath();
       ctx.strokeStyle = "red";
       oof.forEach(function (item, index) {
@@ -368,7 +402,6 @@
       ctx.lineTo(oof[0][0],oof[0][1]);
       ctx.stroke();
 
-      //scaleToFill(img);
 
       emojiPaster();
     }
@@ -396,6 +429,7 @@
         }
       }
     }
+    
     canvas.addEventListener("mousedown",rectangleMaker,false);
   </script>
 </body>
