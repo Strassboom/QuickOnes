@@ -155,6 +155,14 @@
     background-color: #2980B9;
   }
 
+    .effet{
+    /*width: 400px; height: 300px;*/
+    margin: 0 0 0 0;/* margin: 0 auto 50px auto; */
+    box-shadow: 0 1px 5px rgba(0,0,0,.5);
+  }
+  .effet img{
+    position: absolute;
+  }
   .filtre--r{
     -webkit-mask: -webkit-radial-gradient( center, closest-side, transparent 30%, black 80%);
     -webkit-mask: radial-gradient( closest-side at center, transparent 50%, black 110%);
@@ -163,6 +171,13 @@
     filter: url('#filtre1');
   }
 </style>
+  <script src= 
+  "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"> 
+      </script> 
+        
+      <script src= 
+  "https://files.codepedia.info/files/uploads/iScripts/html2canvas.js"> 
+      </script> 
 </head>
 
 <body>
@@ -172,7 +187,7 @@
         <!--<input type="submit" class="rock" name="confirm">-->
     </form>
   <script>
-    var canvas;
+    var firstCanvas;
     var canvaswidth = 449;
     var canvasheight = 449;
     var megaDiv;
@@ -188,6 +203,20 @@
     var bottommost;
     var topmost;
     var cornerList;
+    var divvy;
+    var bottomImage;
+    var topImage;
+    var svg;
+    var defs;
+    var maskr;
+    var rect;
+    var radialGradient;
+    var stop1;
+    var stop2;
+    var filterR;
+    var feGaussianBlur;
+    var getCanvas;
+    var savebutton;
     if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 
       canvaswidth = window.innerWidth;
@@ -198,22 +227,22 @@
 
     function scaleToFill(img){
       // get the scale
-      var scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+      var scale = Math.max(firstCanvas.width / img.width, firstCanvas.height / img.height);
       // get the top left position of the image
-      var x = (canvas.width / 2) - (img.width / 2) * scale;
-      var y = (canvas.height / 2) - (img.height / 2) * scale;
+      var x = (firstCanvas.width / 2) - (img.width / 2) * scale;
+      var y = (firstCanvas.height / 2) - (img.height / 2) * scale;
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     }
 
     // Calle
     function scaleToFit(img){
     // get the scale
-    var scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+    var scale = Math.min(firstCanvas.width / img.width, firstCanvas.height / img.height);
     // get the top left position of the image
-    var x = (canvas.width / 2) - (img.width / 2) * scale;
-    var y = (canvas.height / 2) - (img.height / 2) * scale;
-    canvas.width = img.width * scale;
-    canvas.height = img.height * scale;
+    var x = (firstCanvas.width / 2) - (img.width / 2) * scale;
+    var y = (firstCanvas.height / 2) - (img.height / 2) * scale;
+    firstCanvas.width = img.width * scale;
+    firstCanvas.height = img.height * scale;
     //ctx.filter = 'blur(1px)';
 
     ctx.drawImage(img, 0, 0, img.width * scale, img.height * scale);
@@ -226,16 +255,16 @@
         megaDiv = document.createElement('DIV');
         megaDiv.id = "diva";
         megaDiv.class = "imgcontainer";
-        canvas = document.createElement('CANVAS');
-        canvas.id = "myCanvas";
-        canvas.class = "income";
-        canvas.width = canvaswidth;
-        canvas.height = canvasheight;
-        ctx = canvas.getContext("2d");
+        firstCanvas = document.createElement('CANVAS');
+        firstCanvas.id = "myCanvas";
+        firstCanvas.class = "income";
+        firstCanvas.width = canvaswidth;
+        firstCanvas.height = canvasheight;
+        ctx = firstCanvas.getContext("2d");
 
         ctx.strokeStyle = "red";
-        canvas.addEventListener("mousedown",rectangleMaker,false);
-        megaDiv.appendChild(canvas);
+        firstCanvas.addEventListener("mousedown",rectangleMaker,false);
+        megaDiv.appendChild(firstCanvas);
         document.body.appendChild(megaDiv);
         document.body.removeChild(document.body.childNodes[1]);
         let photo = this.files[0];
@@ -243,15 +272,15 @@
         //formData.append("photo", photo);
         //fetch('/upload/image', {method: "POST", body: formData});
         // Read in the image file as a data URL.
-        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.clearRect(0,0,firstCanvas.width,firstCanvas.height);
         ctx.strokeStyle = "red";
         checkup = [];
         var FR = new FileReader();
         FR.onload = function(e){
           img = new Image();
           img.onload = function(){
-            //canvas.width = this.width;
-            //canvas.height = this.height;
+            //firstCanvas.width = this.width;
+            //firstCanvas.height = this.height;
             //ctx.filter = 'blur(14px)';
             scaleToFit(this);
           }
@@ -318,6 +347,95 @@
       return [okayx,okayy];
     }
 
+    //Moves SVG image back to canvas and downloads it
+    function bringBackImage(){
+      
+      // el.download = "GeeksForGeeks.png"
+      // var el = document.createElement("a");
+      // el.href = imgageData;
+      // el.click();
+    }
+    //Moves canvas image to svg div
+    function imageMover(){
+      divvy = document.createElement("DIV");
+      divvy.id = "stormtrooper";
+      divvy.classList.add("effet");
+
+      bottomImage = firstCanvas.toDataURL("image/jpg");
+      topImage = firstCanvas.toDataURL("image/jpg");
+
+      ctx.clearRect(0,0,firstCanvas.width,firstCanvas.height);
+      centerPic = document.createElement("img");
+      centerPic.id = "iCanSee";
+      edgePic = document.createElement("img");
+      edgePic.id = "iDoNotSee";
+
+      centerPic.src = bottomImage;
+
+      edgePic.classList.add("filtre--r");
+      edgePic.src = topImage;
+
+      svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.height = "0";
+
+      defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+
+      maskr = document.createElementNS("http://www.w3.org/2000/svg", "mask");
+      maskr.id = "mask-radial";
+
+      rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      rect.width = "400";
+      rect.height = "300";
+      rect.fill = "url(#g1)"
+
+      radialGradient = document.createElementNS("http://www.w3.org/2000/svg", "radialGradient");
+
+      radialGradient.id = "g1";
+      radialGradient.cx = "50%";
+      radialGradient.cy = "50%";
+      radialGradient.r = "50%";
+
+      stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+      stop1.setAttribute("stop-color","black");
+      stop1.offset = "50%";
+
+      stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+      stop2.setAttribute("stop-color","white");
+      stop2.offset = "110%";
+
+      filterR = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+      filterR.id="filtre1";
+
+      feGaussianBlur = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur");
+      feGaussianBlur.setAttribute("in","SourceGraphic");
+      feGaussianBlur.setAttribute("stdDeviation","5");
+
+      radialGradient.appendChild(stop1);
+      radialGradient.appendChild(stop2);
+
+
+      filterR.appendChild(feGaussianBlur);
+
+      maskr.appendChild(rect);
+      maskr.appendChild(radialGradient);
+
+      defs.appendChild(maskr);
+      defs.appendChild(filterR);
+
+      svg.appendChild(defs);
+
+
+      divvy.appendChild(centerPic);
+      divvy.appendChild(edgePic);
+      document.body.appendChild(divvy);
+      document.getElementById("stormtrooper").style.width = document.getElementsByTagName("CANVAS")[0].width.toString() + "px";
+      document.getElementById("stormtrooper").style.height = document.getElementsByTagName("CANVAS")[0].height.toString() + "px";
+      document.body.appendChild(svg);
+      document.body.removeChild(document.getElementById("diva"));
+      document.body.removeChild(document.getElementsByTagName("BUTTON")[0]);
+      //bringBackImage();
+    }
+
     // Pastes the given number of heart emojis onto an image and prepares the image for download
     function emojiPaster(){
       //ctx.filter = 'blur(2px)';
@@ -334,7 +452,7 @@
         var foreground = cornerList;
         for (var item = 0; item < fgTotal; item++){
             fgSize = randomIntFromInterval(10,15);
-            fgSize = canvas.width/fgSize;	
+            fgSize = firstCanvas.width/fgSize;	
             
             fminx = 0;
             
@@ -350,11 +468,11 @@
             
             fmidx = fgx + (fwid/2);
             
-            fmaxx = canvas.width;
+            fmaxx = firstCanvas.width;
             
             fmidy = fy + (fhei/2);
             
-            fmaxy = canvas.height;
+            fmaxy = firstCanvas.height;
             
             
             position = randomizer(fminx,fmidx,fminy,fmidy,
@@ -374,25 +492,12 @@
             //image_copy.paste(fgImage,position,fgImage)
             ctx.drawImage(fgImage,position[0],position[1],fgSize,fgSize);
         }
-        //document.body.style.background = "url(" + canvas.toDataURL() + ")";
-        //title = document.getElementById("LoveIMG").innerText = foreground[0]+foreground[3];
-
-        var el = document.createElement("a");
-        var image = canvas.toDataURL("image/jpg");
-        console.log(image);
-        lastPic = document.createElement("img");
-        lastPic.class = "filtre--r";
-        lastPic.src = image;
-        ctx.drawImage(lastPic,0,0);
-        image = canvas.toDataURL("image/jpg");
-        console.log(canvas);
-        //stackBlurCanvasRGB("myCanvas",0,0,canvas.width,canvas.height,6);  //If using, comment out ctx.filter lines
-        image = canvas.toDataURL("image/jpg");
-        el.download = "makeLove.jpg";
-        el.href = image;
-        document.body.appendChild(el);
-        document.body.removeChild(document.getElementById("diva"));
-        el.click();
+        if (document.getElementsByTagName("BUTTON").length == 0){
+          savebutton = document.createElement("BUTTON");
+          savebutton.value = "TAP ME TO CONFIRM, TAP ABOVE TO REDO"
+          savebutton.onclick = imageMover;
+          document.body.appendChild(savebutton);
+        }
       };
 
     }
@@ -428,8 +533,7 @@
       cornerList.push([rightest[0],topmost[1]]);
       cornerList.push([rightest[0],bottommost[1]]);
       cornerList.push([leftest[0],bottommost[1]]);
-      console.log(cornerList);
-      ctx.clearRect(0,0,canvas.width,canvas.height)
+      ctx.clearRect(0,0,firstCanvas.width,firstCanvas.height)
       scaleToFit(img);
       if (debug){
         debugStraightener(cornerList);
@@ -450,11 +554,11 @@
         }
         if (checkup.length > 0){
           ctx.fillStyle = "red";
-          ctx.lineTo(event.pageX - canvas.offsetLeft,event.pageY - canvas.offsetTop)
+          ctx.lineTo(event.pageX - firstCanvas.offsetLeft,event.pageY - firstCanvas.offsetTop)
           ctx.stroke();
         }
-        ctx.moveTo(event.pageX - canvas.offsetLeft,event.pageY - canvas.offsetTop);
-        checkup.push([event.pageX - canvas.offsetLeft,event.pageY - canvas.offsetTop]);
+        ctx.moveTo(event.pageX - firstCanvas.offsetLeft,event.pageY - firstCanvas.offsetTop);
+        checkup.push([event.pageX - firstCanvas.offsetLeft,event.pageY - firstCanvas.offsetTop]);
         if (checkup.length == 4){
             ctx.lineTo(checkup[0][0],checkup[0][1]);
             ctx.closePath();
