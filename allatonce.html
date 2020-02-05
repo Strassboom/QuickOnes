@@ -494,7 +494,7 @@
         }
         if (document.getElementsByTagName("BUTTON").length == 0){
           savebutton = document.createElement("BUTTON");
-          savebutton.value = "TAP ME TO CONFIRM, TAP ABOVE TO REDO"
+          savebutton.innerHTML = "TAP ME TO CONFIRM, TAP ABOVE TO REDO"
           savebutton.onclick = imageMover;
           document.body.appendChild(savebutton);
         }
