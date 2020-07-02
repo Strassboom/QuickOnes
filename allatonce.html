@@ -589,6 +589,10 @@
       scaleToFit(img);
       console.log(cornerList);
       //debugStraightener(cornerList);
+      firstCanvas.removeEventListener("mousedown",function(){
+          touchDone = true;
+          squarer();
+        },false);
       emojiPaster();
     }
 
@@ -599,7 +603,7 @@
       if (! centerPoint){
         firstCanvas.removeEventListener("mousedown",circleMaker,false);
         centerPoint = {x:event.pageX - firstCanvas.offsetLeft,y:event.pageY - firstCanvas.offsetTop,r:10,startArc:0, endArc:2 * Math.PI}
-        firstCanvas.addEventListener("mouseup",function(){
+        firstCanvas.addEventListener("mousedown",function(){
           touchDone = true;
           squarer();
         },false);
