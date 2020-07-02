@@ -183,7 +183,7 @@
 <body>
     <form action="upload.php" method="post" enctype="multipart/form-data">
         <input type="file" id="file" name="file" class="inputfile" accept="image/*" onclick>
-        <label for="file" class="choosefile" id="fileLabel">Tap Me To upload a file, Tap and hold on an area to create a heart-free zone, screenshot the final pic to save the final pic. Refresh the page to create a new photo</label>
+        <label for="file" class="choosefile" id="fileLabel">Tap Me To upload a file, Tap on a point to create the center of a heart-free zone. Tap again to stop it growing. Afterward, press the bottom button and then screenshot the final pic to save the final pic. If the circle gets too big it'll return to a small size and start growing again. Refresh the page to create a new photo</label>
         <!--<input type="submit" class="rock" name="confirm">-->
     </form>
   <script>
@@ -614,10 +614,10 @@
         ctx.beginPath();
         ctx.arc(centerPoint.x, centerPoint.y, centerPoint.r, centerPoint.startArc, centerPoint.endArc);
         ctx.stroke();
-        if (centerPoint.r > firstCanvas.width/4){
+        if ((centerPoint.r >= firstCanvas.width/2 && firstCanvas.width/2 >= firstCanvas.height/2) || (centerPoint.r >= firstCanvas.height/2 && firstCanvas.height/2 >= firstCanvas.width/2)){
           centerPoint.r = 10;
         }
-        setTimeout(circleMaker, 31.25);
+        setTimeout(circleMaker, 15.625);
       } 
     }
   </script>
